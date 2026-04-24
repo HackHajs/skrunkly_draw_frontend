@@ -1,0 +1,8 @@
+.canvas {
+    height: 100%;
+    aspect-ratio: 1;
+  
+    image-rendering: pixelated;
+    background-color: #03070F;
+    cursor: none;
+}

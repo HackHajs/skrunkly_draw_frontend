@@ -4,3 +4,4 @@ streamlit/.streamlit/secrets.toml
 /streamlit/pages/__pycache__
 /streamlit/utils/__pycache__
 /streamlit/.streamlit/logs/
+/streamlit/canvas/__pycache__

@@ -131,21 +131,23 @@ def verify_session() -> bool:
 
 def require_login(redirect_page: str = "Feed") -> bool:
     logger.debug(f"Checking login requirement (redirect_page: {redirect_page})")
-    if st.session_state.get("is_logged_in"):
-        logger.debug("User already logged in, access granted")
-        st.switch_page("pages/1_feed.py")
+    if not st.session_state.get("is_logged_in"):
+        logger.debug("User not logged in, access denied")
+        st.warning("Please log in to access this page.")
+        st.stop()
         return False
-    else:
-        logger.debug("User not logged in, access denied - redirecting to Feed")
-        return True
+    
+    logger.debug("User logged in, access granted")
+    return True
 
 
 def require_logout(redirect_page: str = "Feed") -> bool:
     logger.debug(f"Checking logout requirement (redirect_page: {redirect_page})")
-    if not st.session_state.get("is_logged_in"):
-        logger.debug("User not logged in, access granted to auth page")
-        st.switch_page("pages/1_feed.py")
+    if st.session_state.get("is_logged_in"):
+        logger.debug("User already logged in, access denied to auth page")
+        st.warning("You are already logged in.")
+        st.stop()
         return False
-    else:
-        logger.debug("User already logged in, redirecting from auth page to Feed")
+    
+    logger.debug("User not logged in, access granted to auth page")
     return True

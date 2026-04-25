@@ -15,8 +15,6 @@ def draw_page():
 
     if is_debug_enabled():
         logger.debug("Draw page loaded - user accessing drawing canvas")
-
-    # st.header("Draw")
     
     logger.info("User accessing draw page")
 

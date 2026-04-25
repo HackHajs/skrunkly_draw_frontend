@@ -151,9 +151,9 @@ export default function({setTriggerValue, parentElement, data}) {
         })
 
     } else {
-        // preview setup
-        
-        //hide editor bar
+        let bar = parentElement.querySelector(".bar");
+        bar.style.display = "none";
+        canvas.style.height = "100%";
     }
     
     scenes.push([ctx, data.scn]);

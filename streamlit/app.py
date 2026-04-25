@@ -22,6 +22,7 @@ settings_pg = st.Page(settings_page, title="Settings")
 
 st.set_page_config(
     page_title="Skrunkly Draw",
+    page_icon="favicon.gif",
     layout="centered",
     initial_sidebar_state="collapsed",
 )

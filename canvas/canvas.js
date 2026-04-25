@@ -33,7 +33,6 @@ function drawStroke(s) {
     dx = Math.random() - .5
     dy = Math.random() - .5
 
-    // ctx.lineWidth = s.points[0][2];
     ctx.beginPath();
     ctx.moveTo(s.points[0][0] + dx, s.points[0][1] + dy);
     for (let p = 1; p < s.points.length; p++) {
@@ -58,12 +57,12 @@ function draw() {
     } 
 
     if (cursor[2] != 0) {
-        c = cursor[2]
+        c = cursor[2];
     } else {
-        c = cursor_size.value * .5
+        c = cursor_size.value * .5;
     }
 
-    ctx.strokeStyle = "#FFF"
+    ctx.strokeStyle = "#FFF";
     ctx.beginPath();
     ctx.lineWidth = 1;
     ctx.arc(cursor[0], cursor[1], c, 0, 2*Math.PI);

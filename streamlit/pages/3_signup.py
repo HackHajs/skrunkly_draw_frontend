@@ -27,6 +27,9 @@ if st.button("Sign Up", type="primary"):
                 st.success("Account created and logged in!")
                 st.rerun()
             else:
-                st.error(f"Signup successful but login failed: {login_response['error']}")
+                if login_response['error'] == "Email not confirmed":
+                    st.warn("You have received an email with a link to verify the email address. Please verify it and then log in.")
+                else:
+                    st.error(f"Signup successful but login failed: {login_response['error']}")
         else:
             st.error(f"Signup failed: {signup_response['error']}")

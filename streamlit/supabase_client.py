@@ -5,6 +5,9 @@ Provides helper functions to interact with Supabase authentication and database.
 
 import streamlit as st
 from supabase import create_client, Client
+from utils.logger import get_logger, log_error, log_auth_event
+
+logger = get_logger(__name__)
 
 
 def get_supabase_client() -> Client:
@@ -18,9 +21,18 @@ def get_supabase_client() -> Client:
     Raises:
         KeyError: If SUPABASE_URL or SUPABASE_ANON_KEY are not found in st.secrets
     """
-    supabase_url = st.secrets["SUPABASE_URL"]
-    supabase_key = st.secrets["SUPABASE_ANON_KEY"]
-    return create_client(supabase_url, supabase_key)
+    try:
+        supabase_url = st.secrets["SUPABASE_URL"]
+        supabase_key = st.secrets["SUPABASE_ANON_KEY"]
+        client = create_client(supabase_url, supabase_key)
+        logger.debug("Supabase client initialized successfully")
+        return client
+    except KeyError as e:
+        logger.error(f"Missing Supabase secret: {str(e)}")
+        raise
+    except Exception as e:
+        log_error("SUPABASE", "Failed to initialize Supabase client", e)
+        raise
 
 
 def signup_with_email(email: str, password: str) -> dict:
@@ -37,9 +49,15 @@ def signup_with_email(email: str, password: str) -> dict:
     Raises:
         Exception: If signup fails (invalid email, weak password, email already exists, etc.)
     """
-    client = get_supabase_client()
-    response = client.auth.sign_up({"email": email, "password": password})
-    return response
+    try:
+        logger.debug(f"Attempting signup for email: {email}")
+        client = get_supabase_client()
+        response = client.auth.sign_up({"email": email, "password": password})
+        logger.info(f"Signup successful for email: {email}")
+        return response
+    except Exception as e:
+        log_error("SUPABASE_SIGNUP", f"Signup failed for {email}", e)
+        raise
 
 
 def login_with_email(email: str, password: str) -> dict:
@@ -56,9 +74,15 @@ def login_with_email(email: str, password: str) -> dict:
     Raises:
         Exception: If login fails (invalid credentials, user not found, etc.)
     """
-    client = get_supabase_client()
-    response = client.auth.sign_in_with_password({"email": email, "password": password})
-    return response
+    try:
+        logger.debug(f"Attempting login for email: {email}")
+        client = get_supabase_client()
+        response = client.auth.sign_in_with_password({"email": email, "password": password})
+        logger.info(f"Login successful for email: {email}")
+        return response
+    except Exception as e:
+        log_error("SUPABASE_LOGIN", f"Login failed for {email}", e)
+        raise
 
 
 def logout() -> None:
@@ -66,8 +90,13 @@ def logout() -> None:
     Log out the current user by clearing the session.
     Clears auth token from Streamlit session state.
     """
-    client = get_supabase_client()
-    client.auth.sign_out()
+    try:
+        logger.debug("Attempting logout from Supabase")
+        client = get_supabase_client()
+        client.auth.sign_out()
+        logger.info("Logout successful")
+    except Exception as e:
+        log_error("SUPABASE_LOGOUT", "Logout failed", e)
 
 
 def get_current_user() -> dict | None:
@@ -77,9 +106,15 @@ def get_current_user() -> dict | None:
     Returns:
         dict: User information if authenticated, None otherwise
     """
-    client = get_supabase_client()
     try:
+        logger.debug("Fetching current user from Supabase")
+        client = get_supabase_client()
         user = client.auth.get_user()
+        if user:
+            logger.debug(f"Current user retrieved: {user.id if hasattr(user, 'id') else 'unknown'}")
+        else:
+            logger.debug("No authenticated user found")
         return user
-    except Exception:
+    except Exception as e:
+        logger.debug(f"Failed to get current user: {str(e)}")
         return None

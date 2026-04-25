@@ -39,27 +39,31 @@ canvas = st.components.v2.component(
 
         .bar {
             display: flex;
-            background-color: #000000;
+            background-color: var(--st-background-color);
             height: 50px;
             align-items: center;
         }
 
         .color {
-            border-radius: 5px;
+            border-radius: var(--st-button-radius);
             height: 35px;
             width: 35px;
             margin: 5px;
-            background-color: #077;
+            background-color: var(--st-background-color);
         }
         .selected {
-            background-color: #0FF;
+            background-color: var(--st-primary-color);
         }
 
         .spacer {flex-grow: 100;}
 
         .sizeLabel {
             width: 25px;
-            color: #FFFFFF;
+            color: var(--st-text-color);
+        }
+
+        button {
+            border-radius: var(--st-button-radius)
         }
 
         .canvas {

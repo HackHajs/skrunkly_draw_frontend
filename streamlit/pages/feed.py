@@ -21,3 +21,7 @@ def feed_page():
     
     st.info("Featured Post 3")
     st.write("Discover more great skrunksl")
+
+
+def get_posts():
+    return [] #TODO

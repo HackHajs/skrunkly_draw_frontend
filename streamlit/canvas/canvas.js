@@ -34,7 +34,7 @@ function draw(ctx, scn) {
     
     for (let s = 0; s < scn.strokes.length; s++) {
         ctx.strokeStyle = scn.palette[scn.strokes[s].color].value
-        drawStroke(ctx, scn.strokes[s].points)
+        drawStroke(ctx, scn.strokes[s].shape)
     }
 
     if ("stroke" in scn && scn.stroke.length > 1) {
@@ -74,7 +74,7 @@ function compile(scn) {
     let out = {}
     out.palette = []
     for (let i=0; i<8; i++){
-        out.palette.push(scn.palette[i])
+        out.palette.push(scn.palette[i].value)
     }
     out.strokes = scn.strokes
     out.bg_color = "#03070F";
@@ -128,7 +128,7 @@ export default function({setTriggerValue, parentElement, data}) {
                     scn.stroke.push(scn.cursor);
                 }
             } else if (scn.stroke.length > 1) {
-                scn.strokes.push({color: scn.activeColor, points: scn.stroke});
+                scn.strokes.push({color: scn.activeColor, shape: scn.stroke});
                 scn.stroke = []
                 scn.undoBuffer = []
             } else {
@@ -158,8 +158,8 @@ export default function({setTriggerValue, parentElement, data}) {
     
     scenes.push([ctx, data.scn]);
 
-    parentElement.querySelector("button").onclick = () => {
+    parentElement.querySelector("button").addEventListener("click", () => {
         setTriggerValue("commit", compile(scn));
-    };
+    });
 
 }

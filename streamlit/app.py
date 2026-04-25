@@ -59,10 +59,24 @@ else:
 
 page = st.navigation(nav_pages)
 
-col1, col2 = st.columns([10, 1])
+# Top navigation bar
+col1, col2, col3, col4 = st.columns([1, 1, 1, 1], gap="large")
+with col1:
+    if st.button("Draw", use_container_width=True):
+        st.switch_page(draw_page)
 with col2:
+    st.write("**Button 1**")
+with col3:
+    st.write("**Button 2**")
+with col4:
     if st.session_state.is_logged_in:
         if st.button("Logout", use_container_width=True):
             logout()
+    else:
+        if st.button("Login", use_container_width=True):
+            st.switch_page(login_page)
+
+
+st.divider()
 
 page.run()

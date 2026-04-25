@@ -36,7 +36,7 @@ st.markdown(
         }
 
         div[data-testid="stMainBlockContainer"] {
-            padding: 4rem 1rem 0rem;
+            padding: 4rem 1rem 2rem;
         }
 
         div[data-testid="stVerticalBlock"] {

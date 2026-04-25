@@ -1,4 +1,3 @@
-
 import streamlit as st
 
 with open("canvas/canvas.js") as file:
@@ -82,7 +81,6 @@ canvas = st.components.v2.component(
         
             image-rendering: pixelated;
             background-color: #03070F;
-            cursor: none;
         }
     """,
     js=js,

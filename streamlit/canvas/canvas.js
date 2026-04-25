@@ -47,7 +47,7 @@ function draw(ctx, scn) {
         ctx.strokeStyle = scn.palette[scn.activeColor].value
         ctx.beginPath();
         ctx.lineWidth = 1;
-        ctx.arc(scn.cursor[0], scn.cursor[1], scn.cursor[2], 0, 2*Math.PI);
+        ctx.arc(scn.cursor[0], scn.cursor[1], scn.cursor[2] / 2, 0, 2*Math.PI);
         ctx.stroke(); 
     }
 }
@@ -98,6 +98,7 @@ export default function({setTriggerValue, parentElement, data}) {
     
 
     if (data.isEditor) {
+        canvas.style.cursor = "none";
         scn.activeColor = 0;
         scn.stroke = [];
         scn.cursor = [0,0,0]

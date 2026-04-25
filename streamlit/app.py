@@ -149,26 +149,29 @@ def render_user_menu():
             username = get_user_display_name()
             menu_options = [f"{username}", "Profile", "Settings", "Logout"]
             
-            selected = st.selectbox(
+            def handle_user_menu():
+                selected = st.session_state.user_menu
+                st.session_state.user_menu = get_user_display_name()
+                if selected == "Profile":
+                    if is_debug_enabled():
+                        log_event("User navigated", page="profile", logged_in=True)
+                    st.switch_page(profile_pg)
+                elif selected == "Settings":
+                    if is_debug_enabled():
+                        log_event("User navigated", page="settings", logged_in=True)
+                    st.switch_page(settings_pg)
+                elif selected == "Logout":
+                    if is_debug_enabled():
+                        log_event("User logout", page="logout", logged_in=True)
+                    logout()
+            
+            st.selectbox(
                 label="User Menu",
                 options=menu_options,
                 key="user_menu",
                 label_visibility="collapsed",
+                on_change=handle_user_menu
             )
-            if selected == f"{username}":
-                pass
-            elif selected == "Profile":
-                if is_debug_enabled():
-                    log_event("User navigated", page="profile", logged_in=True)
-                st.switch_page(profile_pg)
-            elif selected == "Settings":
-                if is_debug_enabled():
-                    log_event("User navigated", page="settings", logged_in=True)
-                st.switch_page(settings_pg)
-            elif selected == "Logout":
-                if is_debug_enabled():
-                    log_event("User logout", page="logout", logged_in=True)
-                logout()
     else:
         col1, col2, col3, col4 = st.columns([1, 1, 1, 1], gap="medium")
         

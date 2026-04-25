@@ -38,7 +38,7 @@ def make_post(scn):
     try:
         response = rq.post(
             f"{url}/v0/post",
-            json={"mature": False, "skrunkle": scn},
+            json={"mature": False, "skrunkle": scn["commit"]},
             headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
         )
         if response.status_code in (200, 201):

@@ -3,7 +3,7 @@ import streamlit as st
 
 with open("canvas/canvas.js") as file:
     js = file.read()
-    
+
 
 canvas = st.components.v2.component(
     "skrunkle_editor",

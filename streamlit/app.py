@@ -34,6 +34,19 @@ st.markdown(
             background-color: transparent !important;
             border-color: transparent !important;
         }
+
+        div[data-testid="stMainBlockContainer"] {
+            padding: 4rem 1rem 0rem;
+        }
+
+        div[data-testid="stVerticalBlock"] {
+            gap: .1rem;
+        }
+
+        hr {
+            margin: 1em 0em;
+        }
+
     </style>
     """,
     unsafe_allow_html=True,

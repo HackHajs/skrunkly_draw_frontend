@@ -23,7 +23,7 @@ canvas = st.components.v2.component(
 
             <input class="size" type="range" min="1" max="32" value="8" oninput="this.nextElementSibling.innerHTML = this.value"/>
             <p class="sizelabel">8</p>
-            <button>Publish</button>
+            <button>Publish!</button>
         </div>
         <canvas class="canvas" width="128" height="128"></canvas>
         </div>""",
@@ -32,15 +32,16 @@ canvas = st.components.v2.component(
         .editor {
             display: flex;
             flex-direction: column;
-            align-items: stretch;
-            height: 100vh;
-            width: calc(100vh - 50px);
+            align-items: center;
+            height: 40rem;
+            width: 100%;
         }
 
         .bar {
             display: flex;
             background-color: var(--st-background-color);
             height: 50px;
+            width: calc(40rem - 50px);
             align-items: center;
         }
 
@@ -70,6 +71,7 @@ canvas = st.components.v2.component(
         }
 
         button {
+            font-size: 16pt;
             margin: 5px;
             border-radius: var(--st-button-radius);
         }

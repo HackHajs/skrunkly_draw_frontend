@@ -9,25 +9,17 @@ from supabase_client import (
     logout as supabase_logout,
     get_current_user,
 )
+from .logger import get_logger, log_auth_event, log_session_change, log_redirect
+
+logger = get_logger(__name__)
 
 
 def signup(email: str, password: str) -> dict:
-    """
-    Sign up a new user with email and password.
-    
-    Args:
-        email: User's email address
-        password: User's password
-        
-    Returns:
-        dict with keys:
-            - success (bool): Whether signup was successful
-            - user (dict or None): User information if successful
-            - error (str or None): Error message if failed
-    """
+    log_auth_event("Signup attempt", email)
     try:
         response = signup_with_email(email, password)
         user = response.user if hasattr(response, "user") else response.get("user")
+        log_auth_event("Signup successful", email, "success")
         
         return {
             "success": True,
@@ -36,6 +28,7 @@ def signup(email: str, password: str) -> dict:
         }
     except Exception as e:
         error_message = str(e)
+        log_auth_event("Signup failed", email, "error")
         return {
             "success": False,
             "user": None,
@@ -44,20 +37,7 @@ def signup(email: str, password: str) -> dict:
 
 
 def login(email: str, password: str) -> dict:
-    """
-    Log in a user with email and password.
-    
-    Args:
-        email: User's email address
-        password: User's password
-        
-    Returns:
-        dict with keys:
-            - success (bool): Whether login was successful
-            - user (dict or None): User information if successful
-            - error (str or None): Error message if failed
-            - session (dict or None): Session data with access token
-    """
+    log_auth_event("Login attempt", email)
     try:
         response = login_with_email(email, password)
         user = response.user if hasattr(response, "user") else response.get("user")
@@ -72,6 +52,9 @@ def login(email: str, password: str) -> dict:
         
         st.session_state.access_token = access_token
         st.session_state.user = user
+        log_session_change("access_token", "***token***")
+        log_session_change("user", email)
+        log_auth_event("Login successful", email, "success")
         
         return {
             "success": True,
@@ -81,6 +64,7 @@ def login(email: str, password: str) -> dict:
         }
     except Exception as e:
         error_message = str(e)
+        log_auth_event("Login failed", email, "error")
         return {
             "success": False,
             "user": None,
@@ -90,10 +74,15 @@ def login(email: str, password: str) -> dict:
 
 
 def logout() -> None:
-    """
-    Log out the current user and clear session state.
-    Clears stored session tokens and user information.
-    """
+    user_email = None
+    if "user" in st.session_state and st.session_state.user:
+        user = st.session_state.user
+        if hasattr(user, 'email'):
+            user_email = user.email
+        elif isinstance(user, dict):
+            user_email = user.get('email')
+    
+    log_auth_event("Logout initiated", user_email)
     try:
         supabase_logout()
     except Exception:
@@ -103,72 +92,60 @@ def logout() -> None:
         del st.session_state.access_token
     if "user" in st.session_state:
         del st.session_state.user
+    
+    log_auth_event("Logout completed", user_email, "success")
 
 
 def get_user() -> dict | None:
-    """
-    Get the currently authenticated user's information.
-    
-    Returns:
-        dict: User information if authenticated, None otherwise
-    """
     try:
+        logger.debug("Attempting to retrieve current user from Supabase")
         user = get_current_user()
+        if user:
+            logger.debug("User retrieved successfully")
+        else:
+            logger.debug("No user found")
         return user
-    except Exception:
+    except Exception as e:
+        logger.debug(f"Error retrieving user: {str(e)}")
         return None
 
 
 def verify_session() -> bool:
-    """
-    Check if a valid session exists.
-    Checks both st.session_state and by querying the current user.
-    
-    Returns:
-        bool: True if user is authenticated, False otherwise
-    """
+    logger.debug("Verifying session state")
     if "access_token" in st.session_state and st.session_state.access_token:
+        logger.debug("Session verified via access_token")
         return True
     
     try:
         user = get_current_user()
-        return user is not None
-    except Exception:
+        if user:
+            logger.debug("Session verified via Supabase")
+            return True
+        else:
+            logger.debug("Session verification failed - no user found")
+            return False
+    except Exception as e:
+        logger.debug(f"Session verification error: {str(e)}")
         return False
 
 
 def require_login(redirect_page: str = "Feed") -> bool:
-    """
-    Check if user is logged in. If not, display an error and redirect.
-    Use this at the top of pages that require authentication.
-    
-    Args:
-        redirect_page: The page to redirect to if user is not logged in (e.g., "Feed")
-    
-    Returns:
-        bool: True if user is logged in, False if not logged in
-    """
-    if not st.session_state.get("is_logged_in"):
-        st.error("This page requires you to be logged in.")
-        st.info(f"Please log in to access this feature. Redirecting you to {redirect_page}...")
-        st.stop()
+    logger.debug(f"Checking login requirement (redirect_page: {redirect_page})")
+    if st.session_state.get("is_logged_in"):
+        logger.debug("User already logged in, access granted")
+        st.switch_page("pages/1_feed.py")
         return False
-    return True
+    else:
+        logger.debug("User not logged in, access denied - redirecting to Feed")
+        return True
 
 
 def require_logout(redirect_page: str = "Feed") -> bool:
-    """
-    Check if user is logged out. If logged in, display info and redirect.
-    Use this at the top of auth pages (login/signup) to prevent logged-in users from accessing them.
-    
-    Args:
-        redirect_page: The page to redirect to if user is already logged in (e.g., "Feed")
-    
-    Returns:
-        bool: True if user is logged out, False if already logged in
-    """
-    if st.session_state.get("is_logged_in"):
-        st.info(f"You are already logged in. Redirecting to {redirect_page}...")
-        st.switch_page(f"pages/1_feed.py")
+    logger.debug(f"Checking logout requirement (redirect_page: {redirect_page})")
+    if not st.session_state.get("is_logged_in"):
+        logger.debug("User not logged in, access granted to auth page")
+        st.switch_page("pages/1_feed.py")
         return False
+    else:
+        logger.debug("User already logged in, redirecting from auth page to Feed")
     return True

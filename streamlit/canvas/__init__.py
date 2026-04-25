@@ -23,7 +23,7 @@ canvas = st.components.v2.component(
 
             <input class="size" type="range" min="1" max="32" value="8" oninput="this.nextElementSibling.innerHTML = this.value"/>
             <p class="sizelabel">8</p>
-            <button>submit</button>
+            <button>Publish</button>
         </div>
         <canvas class="canvas" width="128" height="128"></canvas>
         </div>""",

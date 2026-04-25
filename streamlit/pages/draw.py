@@ -21,23 +21,30 @@ def draw_page():
     logger.info("User accessing draw page")
 
 
-    canvas(data={"isEditor": True, "scn": 
+    result = canvas(data={"isEditor": True, "scn": 
     {
         "palette": ["#FF0000", "#9F9F00", "#00FF00", "#009F9F", "#0000FF", "#9F009F", "#7F7F7F", "#CFCFCF"],
         "strokes": []
-    }},
-        on_commit_change = make_post
-    )
+    }})
+
+    if result:
+        make_post(result)
 
 
 def make_post(scn):
-    #TODO get url,
-    #TODO get token
+    url = st.secrets.get("API_HOST", "http://localhost:8000")
+    token = st.session_state.get("access_token", "")
     
-    rq.post(f"{url}/v0/post",
-        json={"mature": False, "skrunkle": scn},
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    try:
+        response = rq.post(
+            f"{url}/v0/post",
+            json={"mature": False, "skrunkle": scn},
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
         )
-
-    #TODO change to feed page? something else?
-    #TODO verify post success, give user feedback
+        if response.status_code in (200, 201):
+            st.toast("Drawing published successfully!")
+        else:
+            st.error(f"Failed to publish. API returned status code {response.status_code}: {response.text}")
+    except Exception as e:
+        logger.error(f"Failed to publish post: {str(e)}")
+        st.error(f"Failed to publish drawing: {e}")

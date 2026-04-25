@@ -46,7 +46,7 @@ def signup_page():
                     else:
                         logger.warning(f"Signup successful but login failed for {email}: {login_response['error']}")
                         if login_response['error'] == "Email not confirmed":
-                            st.warn("You have received an email with a link to verify the email address. Please verify it and then log in.")
+                            st.warning("You have received an email with a link to verify the email address. Please verify it and then log in.")
                         else:
                             st.error(f"Signup successful but login failed: {login_response['error']}")
                 else:

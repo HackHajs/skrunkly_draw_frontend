@@ -45,12 +45,16 @@ def login(email: str, password: str) -> dict:
         
         if session and hasattr(session, "access_token"):
             access_token = session.access_token
+            refresh_token = session.refresh_token if hasattr(session, "refresh_token") else "dummy-refresh-token"
         elif isinstance(session, dict):
             access_token = session.get("access_token")
+            refresh_token = session.get("refresh_token", "dummy-refresh-token")
         else:
             access_token = None
+            refresh_token = None
         
         st.session_state.access_token = access_token
+        st.session_state.refresh_token = refresh_token
         st.session_state.user = user
         log_session_change("access_token", "***token***")
         log_session_change("user", email)

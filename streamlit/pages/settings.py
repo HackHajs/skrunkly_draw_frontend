@@ -19,10 +19,24 @@ def settings_page():
 
     st.divider()
     st.subheader("Account Settings")
+    user = st.session_state.get("user")
+    current_username = "User"
+    if user:
+        if hasattr(user, 'email'):
+            current_username = user.email.split('@')[0]
+        elif isinstance(user, dict) and 'email' in user:
+            current_username = user['email'].split('@')[0]
+            
+        if hasattr(user, 'user_metadata') and user.user_metadata and 'username' in user.user_metadata:
+            current_username = user.user_metadata['username']
+        elif isinstance(user, dict) and 'user_metadata' in user and user['user_metadata'] and 'username' in user['user_metadata']:
+            current_username = user['user_metadata']['username']
+            
+    st.write(f"Current Username: **{current_username}**")
     
     with st.expander("Change Username", expanded=True):
-        new_username = st.text_input("New Username", placeholder="Enter your new username")
-        if st.button("Update Username"):
+        new_username = st.text_input("New Username", placeholder="Enter your new username", key="text_new_username")
+        if st.button("Update Username", key="btn_update_username"):
             if new_username:
                 try:
                     with st.spinner("Updating..."):
@@ -45,7 +59,7 @@ def settings_page():
                                     st.session_state.user["user_metadata"] = {}
                                 st.session_state.user["user_metadata"]["username"] = new_username
                             
-                        st.success("Username updated successfully!")
+                        st.toast("Username updated successfully!", icon="✅")
                 except Exception as e:
                     st.error(f"Failed to update username: {str(e)}")
             else:

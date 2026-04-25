@@ -25,6 +25,15 @@ def get_supabase_client() -> Client:
         supabase_url = st.secrets["SUPABASE_URL"]
         supabase_key = st.secrets["SUPABASE_ANON_KEY"]
         client = create_client(supabase_url, supabase_key)
+        
+        # Inject the active session if the user is authenticated in the frontend
+        if "access_token" in st.session_state and st.session_state.access_token:
+            refresh_token = st.session_state.get("refresh_token", "dummy-refresh-token")
+            try:
+                client.auth.set_session(st.session_state.access_token, refresh_token)
+            except Exception as e:
+                logger.warning(f"Could not automatically set session on Supabase client: {str(e)}")
+                
         logger.debug("Supabase client initialized successfully")
         return client
     except KeyError as e:

@@ -26,6 +26,18 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+st.markdown(
+    """
+    <style>
+        div[data-baseweb="select"] > div {
+            background-color: transparent !important;
+            border-color: transparent !important;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 if "is_logged_in" not in st.session_state:
     st.session_state.is_logged_in = False
@@ -77,13 +89,25 @@ def logout():
 
 
 def get_user_display_name() -> str:
-    """Extract user display name from user object or email"""
+    """Extract user display name from user object metadata or email"""
     if st.session_state.user:
-        # Try to get email first, then fall back to id
-        if hasattr(st.session_state.user, 'email'):
-            return st.session_state.user.email.split('@')[0]
-        elif isinstance(st.session_state.user, dict) and 'email' in st.session_state.user:
-            return st.session_state.user['email'].split('@')[0]
+        user = st.session_state.user
+        
+        # Check metadata for custom username first
+        if hasattr(user, 'user_metadata'):
+            metadata = user.user_metadata
+            if metadata and 'username' in metadata:
+                return metadata['username']
+        elif isinstance(user, dict) and 'user_metadata' in user:
+            metadata = user['user_metadata']
+            if metadata and 'username' in metadata:
+                return metadata['username']
+
+        # Try to get email first, then fall back
+        if hasattr(user, 'email'):
+            return user.email.split('@')[0]
+        elif isinstance(user, dict) and 'email' in user:
+            return user['email'].split('@')[0]
     return "User"
 
 
@@ -92,10 +116,11 @@ def render_user_menu():
     col1, col2, col3, col4 = st.columns([1, 1, 1, 1], gap="large")
 
     with col1:
-        if st.button("Draw", use_container_width=True):
-            if is_debug_enabled():
-                log_event("User navigated", page="draw", logged_in=st.session_state.is_logged_in)
-            st.switch_page(draw_pg)
+        if st.session_state.is_logged_in:
+            if st.button("Draw", use_container_width=True):
+                if is_debug_enabled():
+                    log_event("User navigated", page="draw", logged_in=st.session_state.is_logged_in)
+                st.switch_page(draw_pg)
     with col2:
         st.write("**Button 1**")
     with col3:
@@ -126,10 +151,17 @@ def render_user_menu():
                     log_event("User logout", page="logout", logged_in=True)
                 logout()
         else:
-            if st.button("Log In", use_container_width=True):
-                if is_debug_enabled():
-                    log_event("User navigated", page="login", logged_in=False)
-                st.switch_page(login_pg)
+            login_col, signup_col = st.columns(2)
+            with login_col:
+                if st.button("Log In", use_container_width=True):
+                    if is_debug_enabled():
+                        log_event("User navigated", page="login", logged_in=False)
+                    st.switch_page(login_pg)
+            with signup_col:
+                if st.button("Sign Up", use_container_width=True):
+                    if is_debug_enabled():
+                        log_event("User navigated", page="signup", logged_in=False)
+                    st.switch_page(signup_pg)
 
 
 restore_session()
@@ -157,7 +189,7 @@ else:
         logger.debug("Navigation pages for logged-out user: feed, discover, login, signup")
 
 # Single st.navigation() call with pages list
-page = st.navigation(pages, position="top")
+page = st.navigation(pages, position="hidden")
 
 if is_debug_enabled():
     logger.debug(f"Page being rendered: {page.title}")

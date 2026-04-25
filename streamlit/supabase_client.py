@@ -99,6 +99,21 @@ def logout() -> None:
         log_error("SUPABASE_LOGOUT", "Logout failed", e)
 
 
+def update_user_metadata(metadata: dict):
+    """
+    Update the authenticated user's metadata (e.g. username).
+    """
+    try:
+        logger.debug("Attempting to update user metadata")
+        client = get_supabase_client()
+        response = client.auth.update_user({"data": metadata})
+        logger.info("User metadata updated successfully")
+        return response
+    except Exception as e:
+        log_error("SUPABASE_UPDATE", "Failed to update user metadata", e)
+        raise
+
+
 def get_current_user() -> dict | None:
     """
     Get the currently authenticated user's information.

@@ -1,5 +1,7 @@
 import streamlit as st
-from utils.auth import login
+from utils.auth import login, require_logout
+
+require_logout("Feed")
 
 st.header("Log In")
 

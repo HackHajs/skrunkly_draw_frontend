@@ -135,3 +135,40 @@ def verify_session() -> bool:
         return user is not None
     except Exception:
         return False
+
+
+def require_login(redirect_page: str = "Feed") -> bool:
+    """
+    Check if user is logged in. If not, display an error and redirect.
+    Use this at the top of pages that require authentication.
+    
+    Args:
+        redirect_page: The page to redirect to if user is not logged in (e.g., "Feed")
+    
+    Returns:
+        bool: True if user is logged in, False if not logged in
+    """
+    if not st.session_state.get("is_logged_in"):
+        st.error("This page requires you to be logged in.")
+        st.info(f"Please log in to access this feature. Redirecting you to {redirect_page}...")
+        st.stop()
+        return False
+    return True
+
+
+def require_logout(redirect_page: str = "Feed") -> bool:
+    """
+    Check if user is logged out. If logged in, display info and redirect.
+    Use this at the top of auth pages (login/signup) to prevent logged-in users from accessing them.
+    
+    Args:
+        redirect_page: The page to redirect to if user is already logged in (e.g., "Feed")
+    
+    Returns:
+        bool: True if user is logged out, False if already logged in
+    """
+    if st.session_state.get("is_logged_in"):
+        st.info(f"You are already logged in. Redirecting to {redirect_page}...")
+        st.switch_page(f"pages/1_feed.py")
+        return False
+    return True

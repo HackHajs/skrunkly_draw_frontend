@@ -1,5 +1,7 @@
 import streamlit as st
-from utils.auth import signup, login
+from utils.auth import signup, login, require_logout
+
+require_logout("Feed")
 
 st.header("Sign Up")
 st.write("Create a new account.")

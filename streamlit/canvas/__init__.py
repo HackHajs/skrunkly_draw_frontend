@@ -57,7 +57,7 @@ canvas = st.components.v2.component(
         .selected {
             transform: translateY(10px);
             margin: 8px;
-            padding: 2px;
+            padding: 1px;
             border-color: var(--st-primary-color);
             background-color: var(--st-primary-color);
         }
@@ -70,7 +70,8 @@ canvas = st.components.v2.component(
         }
 
         button {
-            border-radius: var(--st-button-radius)
+            margin: 5px;
+            border-radius: var(--st-button-radius);
         }
 
         .canvas {

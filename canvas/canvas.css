@@ -26,7 +26,7 @@
 .selected {
     transform: translateY(10px);
     margin: 8px;
-    padding: 2px;
+    padding: 1px;
     background-color: #0FF;
     border-color: #0FF;
 }
@@ -36,6 +36,10 @@
 .sizeLabel {
     width: 25px;
     color: #FFFFFF;
+}
+
+button {
+    margin: 5px;
 }
 
 .canvas {

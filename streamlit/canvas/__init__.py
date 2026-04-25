@@ -46,12 +46,19 @@ canvas = st.components.v2.component(
 
         .color {
             border-radius: var(--st-button-radius);
+
             height: 35px;
             width: 35px;
-            margin: 5px;
+            margin: 1px;
+            padding: 1px;
+            border-color: var(--st-background-color);
             background-color: var(--st-background-color);
         }
         .selected {
+            transform: translateY(10px);
+            margin: 8px;
+            padding: 2px;
+            border-color: var(--st-primary-color);
             background-color: var(--st-primary-color);
         }
 

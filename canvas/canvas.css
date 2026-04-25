@@ -18,11 +18,17 @@
     border-radius: 5px;
     height: 35px;
     width: 35px;
-    margin: 5px;
+    margin: 1px;
+    padding: 1px;
     background-color: #077;
+    border-color: #077;
 }
 .selected {
+    transform: translateY(10px);
+    margin: 8px;
+    padding: 2px;
     background-color: #0FF;
+    border-color: #0FF;
 }
 
 .spacer {flex-grow: 100;}

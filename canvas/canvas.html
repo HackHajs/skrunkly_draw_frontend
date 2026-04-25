@@ -4,9 +4,31 @@
 </head>
 
 <body>
-    <canvas class="canvas" width="128" height="128">
+    <div class="editor">
+        <!-- size slider -->
+        <!-- color buttons -->
 
-    </canvas>
+        <div class="bar">
+            <input class="color selected" type="color" value="#FF0000"/>
+            <input class="color"          type="color" value="#9F9F00" disabled/>
+            <input class="color"          type="color" value="#00FF00" disabled/>
+            <input class="color"          type="color" value="#009F9F" disabled/>
+            <input class="color"          type="color" value="#0000FF" disabled/>
+            <input class="color"          type="color" value="#9F009F" disabled/>
+            <input class="color"          type="color" value="#7F7F7F" disabled/>
+            <input class="color"          type="color" value="#CFCFCF" disabled/>
+
+            <div class="spacer"></div>
+
+            <!-- <input class="size" type="range" min="1" max="32" oninput="this.nextElementSibling.value = this.value"/> -->
+            <input class="size" type="range" min="1" max="32" value="8" oninput="this.nextElementSibling.innerHTML = this.value"/>
+            <p class="sizelabel">8</p>
+        </div>
+
+        <canvas class="canvas" width="128" height="128"></canvas>
+
+
+    </div>
     <script src="canvas.js"></script>
 
 </body>

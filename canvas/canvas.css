@@ -1,5 +1,39 @@
+
+.editor {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100vh;
+    width: calc(100vh - 50px);
+}
+
+.bar {
+    display: flex;
+    background-color: #000000;
+    height: 50px;
+    align-items: center;
+}
+
+.color {
+    border-radius: 5px;
+    height: 35px;
+    width: 35px;
+    margin: 5px;
+    background-color: #077;
+}
+.selected {
+    background-color: #0FF;
+}
+
+.spacer {flex-grow: 100;}
+
+.sizeLabel {
+    width: 25px;
+    color: #FFFFFF;
+}
+
 .canvas {
-    height: 100%;
+    height: calc(100% - 50px);
     aspect-ratio: 1;
   
     image-rendering: pixelated;

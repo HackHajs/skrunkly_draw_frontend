@@ -47,6 +47,16 @@ st.markdown(
             margin: 1em 0em;
         }
 
+        @media (max-width: 640px) {
+            div[data-testid="stMainBlockContainer"] {
+                padding: 1rem 0.75rem 1.5rem;
+            }
+
+            div[data-testid="stButton"] > button {
+                min-height: 2.5rem;
+            }
+        }
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -130,7 +140,7 @@ def switch_page(param):
 def render_user_menu():
     """Render user profile dropdown menu"""
     if st.session_state.is_logged_in:
-        col1, col2, col3, col4 = st.columns([1, 1, 1, 1], gap="large")
+        col1, col2, col3 = st.columns([1, 1, 1], gap="small")
 
         with col1:
             if st.button("Draw", use_container_width=True, key="btn_auth_draw"):
@@ -147,52 +157,52 @@ def render_user_menu():
                 if is_debug_enabled():
                     log_event("User navigated", page="discover", logged_in=True)
                 st.switch_page(discover_pg)
-        with col4:
-            username = get_user_display_name()
-            menu_options = [f"{username}", "Profile", "Settings", "Logout"]
-            
-            
-            selected = st.selectbox(
-                label="User Menu",
-                options=menu_options,
-                key="user_menu",
-                label_visibility="collapsed",
-            )
 
-            if selected == f"{username}":
-                pass
-            elif selected == "Profile":
-                if is_debug_enabled():
-                    log_event("User navigated", page="profile", logged_in=True)
-                st.switch_page(profile_pg)
-            elif selected == "Settings":
-                if is_debug_enabled():
-                    log_event("User navigated", page="settings", logged_in=True)
-                st.switch_page(settings_pg)
-            elif selected == "Logout":
-                if is_debug_enabled():
-                    log_event("User logout", page="logout", logged_in=True)
-                logout()
+        username = get_user_display_name()
+        menu_options = [f"{username}", "Profile", "Settings", "Logout"]
+
+        selected = st.selectbox(
+            label="User Menu",
+            options=menu_options,
+            key="user_menu",
+            label_visibility="collapsed",
+        )
+
+        if selected == f"{username}":
+            pass
+        elif selected == "Profile":
+            if is_debug_enabled():
+                log_event("User navigated", page="profile", logged_in=True)
+            st.switch_page(profile_pg)
+        elif selected == "Settings":
+            if is_debug_enabled():
+                log_event("User navigated", page="settings", logged_in=True)
+            st.switch_page(settings_pg)
+        elif selected == "Logout":
+            if is_debug_enabled():
+                log_event("User logout", page="logout", logged_in=True)
+            logout()
             
     else:
-        col1, col2, col3, col4 = st.columns([1, 1, 1, 1], gap="medium")
+        top_left, top_right = st.columns([1, 1], gap="small")
+        bottom_left, bottom_right = st.columns([1, 1], gap="small")
         
-        with col1:
+        with top_left:
             if st.button("Feed", use_container_width=True, key="btn_anon_feed"):
                 if is_debug_enabled():
                     log_event("User navigated", page="feed", logged_in=False)
                 st.switch_page(feed_pg)
-        with col2:
+        with top_right:
             if st.button("Discover", use_container_width=True, key="btn_anon_discover"):
                 if is_debug_enabled():
                     log_event("User navigated", page="discover", logged_in=False)
                 st.switch_page(discover_pg)
-        with col3:
+        with bottom_left:
             if st.button("Log In", use_container_width=True, key="btn_anon_login"):
                 if is_debug_enabled():
                     log_event("User navigated", page="login", logged_in=False)
                 st.switch_page(login_pg)
-        with col4:
+        with bottom_right:
             if st.button("Sign Up", use_container_width=True, key="btn_anon_signup"):
                 if is_debug_enabled():
                     log_event("User navigated", page="signup", logged_in=False)

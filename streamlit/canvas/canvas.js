@@ -165,7 +165,7 @@ export default function({setTriggerValue, parentElement, data}) {
     } else {
         let bar = parentElement.querySelector(".bar");
         bar.style.display = "none";
-        canvas.style.height = "100%";
+        canvas.style.height = "auto";
     }
     
     scenes.push([ctx, data.scn]);

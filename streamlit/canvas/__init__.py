@@ -32,16 +32,21 @@ canvas = st.components.v2.component(
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 40rem;
-            width: 100%;
+            width: min(100%, 40rem);
+            margin: 0 auto;
         }
 
         .bar {
             display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 0.25rem;
             background-color: var(--st-background-color);
-            height: 50px;
-            width: calc(40rem - 50px);
+            min-height: 50px;
+            width: 100%;
             align-items: center;
+            padding: 0.25rem;
+            box-sizing: border-box;
         }
 
         .color {
@@ -49,14 +54,14 @@ canvas = st.components.v2.component(
 
             height: 35px;
             width: 35px;
-            margin: 1px;
+            margin: 0;
             padding: 1px;
             border-color: var(--st-background-color);
             background-color: var(--st-background-color);
         }
         .selected {
             transform: translateY(10px);
-            margin: 8px;
+            margin: 8px 4px 0;
             padding: 1px;
             border-color: var(--st-primary-color);
             background-color: var(--st-primary-color);
@@ -64,23 +69,58 @@ canvas = st.components.v2.component(
 
         .spacer {flex-grow: 100;}
 
-        .sizeLabel {
+        .size {
+            width: 7.5rem;
+        }
+
+        .sizelabel {
             width: 25px;
             color: var(--st-text-color);
+            margin: 0;
         }
 
         button {
-            font-size: 16pt;
-            margin: 5px;
+            font-size: 1rem;
+            margin: 0 0 0 auto;
+            padding: 0.35rem 0.75rem;
             border-radius: var(--st-button-radius);
         }
 
         .canvas {
-            height: calc(100% - 50px);
+            width: 100%;
             aspect-ratio: 1;
-        
             image-rendering: pixelated;
             background-color: #03070F;
+            touch-action: none;
+            display: block;
+        }
+
+        @media (max-width: 640px) {
+            .bar {
+                justify-content: center;
+            }
+
+            .spacer {
+                display: none;
+            }
+
+            .color {
+                height: 30px;
+                width: 30px;
+            }
+
+            .selected {
+                transform: none;
+                margin: 0;
+            }
+
+            .size {
+                width: 6.5rem;
+            }
+
+            button {
+                margin-left: 0;
+            }
         }
     """,
     js=js,

@@ -18,29 +18,35 @@ def draw_page():
     
     logger.info("User accessing draw page")
 
-    if "id" in st.query_params:
-        from pages.feed import get_post
-        get_post(st.query_params.id)
 
-
-    result = canvas(data={"isEditor": True, "scn": 
-    {
+    scn = {
         "palette": ["#FF0000", "#9F9F00", "#00FF00", "#009F9F", "#0000FF", "#9F009F", "#7F7F7F", "#CFCFCF"],
         "strokes": []
-    }})
+    }
+
+    if "id" in st.query_params:
+        from pages.feed import get_post
+        p = get_post(st.query_params.id)
+        if p:
+            scn = p["skrunkle"]
+
+
+    result = canvas(data={"isEditor": True, "scn": scn})
 
     if result:
-        make_post(result)
+        make_post(result, st.query_params.id if "id" in st.query_params else None)
 
-
-def make_post(scn):
+def make_post(scn, id):
     url = st.secrets.get("API_HOST", "http://localhost:8000")
     token = st.session_state.get("access_token", "")
     
+    data = {"mature": False, "skrunkle": scn["commit"]}
+    if id:
+        data["reply"] = {"parent": id, "on_feed": False}
     try:
         response = rq.post(
             f"{url}/v0/post",
-            json={"mature": False, "skrunkle": scn["commit"]},
+            json=data,
             headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
         )
         if response.status_code in (200, 201):

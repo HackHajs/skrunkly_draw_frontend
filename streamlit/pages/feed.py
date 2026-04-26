@@ -52,7 +52,6 @@ def get_thread(id):
     url = st.secrets.get("API_HOST", "http://localhost:8000")
 
     main = get_post(id)
-    print("meow")
 
     try:
         response = rq.get(f"{url}/v0/post/replies?id={id}")

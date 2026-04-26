@@ -76,7 +76,7 @@ function compile(scn) {
     for (let i=0; i<8; i++){
         out.palette.push(scn.palette[i].value)
     }
-    out.strokes = scn.strokes
+    out.strokes = scn.strokes.slice(scn.start_stroke)
     out.bg_color = "#03070F";
     return out
 }
@@ -101,7 +101,8 @@ export default function({setTriggerValue, parentElement, data}) {
         canvas.style.cursor = "none";
         scn.activeColor = 0;
         scn.stroke = [];
-        scn.cursor = [0,0,0]
+        scn.cursor = [0,0,0];
+        scn.start_stroke = scn.strokes.length;
     
         for (let i = 0; i<8; i++) {
             scn.palette[i].addEventListener("pointerdown", function (evt) {
@@ -121,6 +122,16 @@ export default function({setTriggerValue, parentElement, data}) {
         canvas.addEventListener("pointerdown", evt => {
             scn.stroke.push(point(ctx, cursor_size.value, evt));
         })
+
+        canvas.addEventListener("pointerdown", evt => {
+            // scn.stroke.push(point(ctx, cursor_size.value, evt));
+            if (evt.pressure == 0 && scn.stoke.length > 1) {
+                scn.strokes.push({color: scn.activeColor, shape: scn.stroke});
+                scn.stroke = []
+                scn.undoBuffer = []
+            }
+        })
+        
         canvas.addEventListener("pointermove", evt => {
             scn.cursor = point(ctx, cursor_size.value, evt);
             if (evt.pressure > 0) {
@@ -139,7 +150,7 @@ export default function({setTriggerValue, parentElement, data}) {
 
         document.addEventListener("keyup", evt => {
             if (evt.ctrlKey && evt.key == "z") {
-                if (scn.strokes.length > 0) {
+                if (scn.strokes.length > scn.start_stroke) {
                     scn.undoBuffer.push(scn.strokes.pop());
                 }
             }

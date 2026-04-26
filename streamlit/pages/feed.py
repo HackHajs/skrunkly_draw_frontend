@@ -32,7 +32,6 @@ def feed_page():
             st.switch_page(st.Page("pages/draw.py"), query_params={"id" : st.query_params.id})
 
 
-
 @st.cache_data(ttl=60) #time in seconds
 def get_posts(): 
     url = st.secrets.get("API_HOST", "http://localhost:8000")

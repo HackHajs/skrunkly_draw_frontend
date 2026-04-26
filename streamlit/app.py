@@ -124,6 +124,8 @@ def get_user_display_name() -> str:
             return user['email'].split('@')[0]
     return "User"
 
+def switch_page(param):
+    st.switch_page(draw_pg, query_params=param)
 
 def render_user_menu():
     """Render user profile dropdown menu"""

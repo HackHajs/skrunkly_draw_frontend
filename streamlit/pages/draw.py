@@ -5,7 +5,6 @@ from utils.logger import get_logger, is_debug_enabled
 import requests as rq
 
 from canvas import canvas 
-from pages.feed import get_post
 
 logger = get_logger(__name__)
 
@@ -20,7 +19,8 @@ def draw_page():
     logger.info("User accessing draw page")
 
     if "id" in st.query_params:
-        post = get_post(st.query_params.id)
+        from pages.feed import get_post
+        get_post(st.query_params.id)
 
 
     result = canvas(data={"isEditor": True, "scn": 

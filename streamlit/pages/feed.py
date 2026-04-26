@@ -1,12 +1,14 @@
 import streamlit as st
 from utils.logger import get_logger, is_debug_enabled
 
+from pages.draw import draw_page
 from pages.profile import get_user
 from canvas import canvas
 
 import requests as rq
 
 logger = get_logger(__name__)
+draw_pg = st.Page(draw_page, title="Draw")
 
 
 
@@ -29,8 +31,7 @@ def feed_page():
 
     if "id" in st.query_params:
         if st.button("Add Reply"):
-            st.switch_page(st.Page("pages/draw.py"), query_params={"id" : st.query_params.id})
-
+            st.switch_page(draw_pg, query_params={"id": st.query_params.id})
 
 @st.cache_data(ttl=60) #time in seconds
 def get_posts(): 

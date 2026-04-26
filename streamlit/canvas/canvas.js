@@ -122,6 +122,16 @@ export default function({setTriggerValue, parentElement, data}) {
         canvas.addEventListener("pointerdown", evt => {
             scn.stroke.push(point(ctx, cursor_size.value, evt));
         })
+
+        canvas.addEventListener("pointerdown", evt => {
+            // scn.stroke.push(point(ctx, cursor_size.value, evt));
+            if (evt.pressure == 0 && scn.stoke.length > 1) {
+                scn.strokes.push({color: scn.activeColor, shape: scn.stroke});
+                scn.stroke = []
+                scn.undoBuffer = []
+            }
+        })
+        
         canvas.addEventListener("pointermove", evt => {
             scn.cursor = point(ctx, cursor_size.value, evt);
             if (evt.pressure > 0) {

@@ -47,7 +47,7 @@ def get_posts():
         st.error(f"Failed to fetch feed: {e}")
 
 
-@st.cache_data(ttl=60) #time in seconds
+@st.cache_data(ttl=30) #time in seconds
 def get_thread(id): 
     url = st.secrets.get("API_HOST", "http://localhost:8000")
 

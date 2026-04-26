@@ -10,7 +10,7 @@ import requests as rq
 logger = get_logger(__name__)
 draw_pg = st.Page(draw_page, title="Draw")
 
-
+st.cache_data.clear()
 
 def feed_page():
     """Feed page - social feed display"""

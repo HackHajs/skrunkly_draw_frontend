@@ -2,7 +2,23 @@ import streamlit as st
 from utils.auth import require_login
 from utils.logger import get_logger, is_debug_enabled
 
+import requests as rq
+
 logger = get_logger(__name__)
+
+
+@st.cache_data(ttl=600) #10 minutes
+def get_user(uuid):
+    url = st.secrets.get("API_HOST", "http://localhost:8000")
+    try:
+        response = rq.get(f"{url}/v0/user?id={uuid}")
+        if response.status_code in (200, 201):
+            return response.json()
+        else:
+            return None
+    except Exception as e:
+        logger.error(f"Failed to fetch user: {str(e)}")
+        st.error(f"Failed to fetch user: {e}")
 
 
 def profile_page():
@@ -17,7 +33,9 @@ def profile_page():
     st.header("My Profile")
 
     user = st.session_state.get("user")
+
     email = "Not available"
+    portfolio = ""
 
     if user:
         if hasattr(user, 'email'):
@@ -37,9 +55,38 @@ def profile_page():
     else:
         username = "Guest"
 
+    user_2 = get_user(user.id)
+    if user_2 != None:
+        username = user_2["name"]
+        portfolio = user_2["link"]
+
+
     st.write(f"**Email:** {email}")
-    st.write(f"**Username:** {username}")
+
+    new_name = st.text_input("**Username:**", placeholder=username)
+    new_porto = st.text_input("**Portfolio:**", placeholder=portfolio)
+
+
+    st.button("Update Profile", key="upd_profile", on_click=lambda:upd_profile(new_name if new_name else username, new_porto))
 
     st.divider()
-    st.subheader("Profile Information")
-    st.write("Edit your profile information here (coming soon)")
+
+def upd_profile(new_name, new_porto):
+    data = {"name": new_name }
+    if new_porto: data["link"] = new_porto
+
+    url = st.secrets.get("API_HOST", "http://localhost:8000")
+    token = st.session_state.get("access_token", "")
+
+    try:
+        response = rq.put(f"{url}/v0/user", json=data, 
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+        )
+
+        if response.status_code in (200, 201):
+            st.toast("Successfully updated profile!")
+        else:
+            st.error(f"Failed to update. API returned status code {response.status_code}: {response.text}")
+    except Exception as e:
+        logger.error(f"Failed to update profile: {str(e)}")
+        st.error(f"Failed to update profile: {e}")

@@ -22,7 +22,10 @@ canvas = st.components.v2.component(
 
             <input class="size" type="range" min="1" max="32" value="8" oninput="this.nextElementSibling.innerHTML = this.value"/>
             <p class="sizelabel">8</p>
-            <button>Publish!</button>
+            <div class="actions">
+                <button type="button" class="export-btn">Export GIF</button>
+                <button type="button" class="publish-btn">Publish!</button>
+            </div>
         </div>
         <canvas class="canvas" width="128" height="128"></canvas>
         </div>""",
@@ -69,6 +72,12 @@ canvas = st.components.v2.component(
 
         .spacer {flex-grow: 100;}
 
+        .actions {
+            display: flex;
+            gap: 0.35rem;
+            margin-left: auto;
+        }
+
         .size {
             width: 7.5rem;
         }
@@ -81,7 +90,7 @@ canvas = st.components.v2.component(
 
         button {
             font-size: 1rem;
-            margin: 0 0 0 auto;
+            margin: 0;
             padding: 0.35rem 0.75rem;
             border-radius: var(--st-button-radius);
         }
@@ -119,6 +128,12 @@ canvas = st.components.v2.component(
             }
 
             button {
+                margin-left: 0;
+            }
+
+            .actions {
+                width: 100%;
+                justify-content: center;
                 margin-left: 0;
             }
         }

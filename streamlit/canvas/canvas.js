@@ -70,13 +70,17 @@ function point(ctx, size, evt) {
     ];
 }
 
-function compile(scn) {
+function compile(scn, includeFullScene = false) {
     let out = {}
     out.palette = []
     for (let i=0; i<8; i++){
         out.palette.push(scn.palette[i].value)
     }
-    out.strokes = scn.strokes.slice(scn.start_stroke)
+    const startStroke = typeof scn.start_stroke === "number" ? scn.start_stroke : 0;
+    out.strokes = includeFullScene ? scn.strokes.slice() : scn.strokes.slice(startStroke)
+    if (includeFullScene && "stroke" in scn && scn.stroke.length > 1) {
+        out.strokes.push({color: scn.activeColor, shape: scn.stroke.slice()});
+    }
     out.bg_color = "#03070F";
     return out
 }
@@ -170,8 +174,12 @@ export default function({setTriggerValue, parentElement, data}) {
     
     scenes.push([ctx, data.scn]);
 
-    parentElement.querySelector("button").addEventListener("click", () => {
+    parentElement.querySelector(".publish-btn").onclick = () => {
         setTriggerValue("commit", compile(scn));
-    });
+    };
+
+    parentElement.querySelector(".export-btn").onclick = () => {
+        setTriggerValue("export", compile(scn, true));
+    };
 
 }
